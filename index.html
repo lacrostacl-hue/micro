@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Horarios Micros San Pedro</title>
+  
+  <meta name="theme-color" content="#1e3a8a">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Micros SP">
+
+  <link rel="manifest" href='data:application/manifest+json,{"name":"Horarios Micros San Pedro","short_name":"Micros SP","start_url":".","display":"standalone","background_color":"#0f172a","theme_color":"#1e3a8a","icons":[{"src":"data:image/svg+xml;utf8,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 512 512%22><rect width=%22512%22 height=%22512%22 rx=%22120%22 fill=%22%231e3a8a%22/><path d=%22M128 128h256v192c0 18-14 32-32 32h-192c-18 0-32-14-32-32V128z%22 fill=%22%2338bdf8%22/><circle cx=%22180%22 cy=%22300%22 r=%2224%22 fill=%22%23f8fafc%22/><circle cx=%22332%22 cy=%22300%22 r=%2224%22 fill=%22%23f8fafc%22/><rect x=%22160%22 y=%22160%22 width=%22192%22 height=%2296%22 rx=%2216%22 fill=%22%230f172a%22/></svg>","sizes":"512x512","type":"image/svg+xml"}]}'>
+
+  <style>
+    :root {
+      --bg-color: #0f172a;
+      --card-bg: #1e293b;
+      --accent: #38bdf8;
+      --accent-hover: #0284c7;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --border-color: #334155;
+      --badge-bg: #0369a1;
+      --gps-btn: #10b981;
+    }
+
+    * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
+    
+    body {
+      background-color: var(--bg-color);
+      color: var(--text-main);
+      margin: 0;
+      padding: 16px;
+      display: flex;
+      justify-content: center;
+      min-height: 100vh;
+    }
+
+    .app-container {
+      width: 100%;
+      max-width: 480px;
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+    }
+
+    header {
+      text-align: center;
+      padding: 12px 0 4px 0;
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 22px;
+      font-weight: 700;
+      color: var(--accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    header p {
+      margin: 4px 0 0 0;
+      font-size: 13px;
+      color: var(--text-muted);
+    }
+
+    .card {
+      background-color: var(--card-bg);
+      border-radius: 16px;
+      padding: 18px;
+      border: 1px solid var(--border-color);
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.3);
+    }
+
+    .form-group {
+      margin-bottom: 14px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: var(--text-muted);
+      margin-bottom: 6px;
+    }
+
+    select, input {
+      width: 100%;
+      padding: 12px;
+      border-radius: 10px;
+      border: 1px solid var(--border-color);
+      background-color: #0f172a;
+      color: var(--text-main);
+      font-size: 15px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .btn {
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: 10px;
+      background-color: var(--accent);
+      color: #0f172a;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 6px;
+    }
+
+    .btn-gps {
+      background-color: var(--gps-btn);
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      margin-bottom: 14px;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 8px;
+      background-color: #0f172a;
+      padding: 4px;
+      border-radius: 10px;
+      margin-bottom: 16px;
+    }
+
+    .tab-btn {
+      flex: 1;
+      padding: 8px;
+      border: none;
+      border-radius: 8px;
+      background: none;
+      color: var(--text-muted);
+      font-size: 13px;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .tab-btn.active {
+      background-color: var(--card-bg);
+      color: var(--accent);
+    }
+
+    .result-card {
+      background: #0f172a;
+      border-radius: 12px;
+      padding: 14px;
+      border-left: 4px solid var(--accent);
+      margin-bottom: 12px;
+    }
+
+    .result-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+
+    .result-title {
+      font-weight: 700;
+      font-size: 15px;
+      color: var(--accent);
+    }
+
+    .badge {
+      background-color: var(--badge-bg);
+      color: #ffffff;
+      font-size: 11px;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 12px;
+    }
+
+    .dest-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-top: 8px;
+      padding-top: 8px;
+      border-top: 1px solid var(--border-color);
+    }
+
+    .dest-item {
+      display: flex;
+      justify-content: space-between;
+      font-size: 13px;
+    }
+
+    .full-schedule-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 12px;
+      margin-top: 8px;
+    }
+
+    .full-schedule-table th, .full-schedule-table td {
+      padding: 8px 4px;
+      text-align: center;
+      border-bottom: 1px solid var(--border-color);
+    }
+
+    .full-schedule-table th {
+      color: var(--accent);
+      font-weight: 600;
+      background-color: #0f172a;
+    }
+
+    .hidden { display: none; }
+  </style>
+</head>
+<body>
+
+<div class="app-container">
+  <header>
+    <h1>🚍 Micros San Pedro</h1>
+    <p>Consulta por origen y hora actual</p>
+  </header>
+
+  <div class="tabs">
+    <button class="tab-btn active" onclick="switchTab('planner')">🔍 Consulta por Origen</button>
+    <button class="tab-btn" onclick="switchTab('schedules')">📋 Planilla Completa</button>
+  </div>
+
+  <div id="plannerTab" class="card">
+    <button class="btn btn-gps" onclick="obtenerUbicacion()">📍 Detectar mi Paradero (GPS)</button>
+
+    <div class="form-group">
+      <label for="dia">Día de viaje</label>
+      <select id="dia" onchange="autoCalculate()">
+        <option value="semana">Lunes a Sábado</option>
+        <option value="domingo">Domingo</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="origen">¿Dónde estás? (Origen)</label>
+      <select id="origen" onchange="autoCalculate()">
+        <option value="Loica Arriba">Loica Arriba</option>
+        <option value="Nihue Alto">Nihue Alto</option>
+        <option value="Las Golondrinas" selected>Las Golondrinas</option>
+        <option value="El Manzanito">El Manzanito</option>
+        <option value="El Prado">El Prado</option>
+        <option value="Camino La Mina">Camino La Mina</option>
+        <option value="San Pedro">San Pedro</option>
+        <option value="Las Arañas">Las Arañas</option>
+        <option value="Los Culenes">Los Culenes</option>
+        <option value="El Sauce">El Sauce</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="horaConsulta">Hora Actual</label>
+      <input type="time" id="horaConsulta" onchange="autoCalculate()">
+    </div>
+
+    <div id="results" class="results-section" style="margin-top: 16px;"></div>
+  </div>
+
+  <div id="schedulesTab" class="card hidden">
+    <div class="form-group">
+      <label for="diaTabla">Ver Horarios Para:</label>
+      <select id="diaTabla" onchange="renderScheduleTable()">
+        <option value="semana">Lunes a Sábado</option>
+        <option value="domingo">Domingo</option>
+      </select>
+    </div>
+
+    <div style="overflow-x: auto;">
+      <table class="full-schedule-table" id="tablaHorarios"></table>
+    </div>
+  </div>
+</div>
+
+<script>
+  const SCHEDULES = {
+    semana: [
+      { id: 1, salida: "07:00", cabecera: "Loica Arriba", fin: "El Sauce", stops: [["Loica Arriba", "07:00"], ["Las Golondrinas", "07:12"], ["El Prado", "07:30"], ["Camino La Mina", "07:35"], ["San Pedro", "07:40"], ["Las Arañas", "07:50"], ["Los Culenes", "07:55"], ["El Sauce", "07:59"]] },
+      { id: 2, salida: "08:30", cabecera: "El Sauce", fin: "Nihue Alto", stops: [["El Sauce", "08:20"], ["Los Culenes", "08:25"], ["Las Arañas", "08:30"], ["San Pedro", "08:40"], ["Camino La Mina", "08:45"], ["El Prado", "08:50"], ["El Manzanito", "08:55"], ["Las Golondrinas", "09:08"], ["Nihue Alto", "09:20"]] },
+      { id: 3, salida: "10:00", cabecera: "Nihue Alto", fin: "El Sauce", stops: [["Nihue Alto", "10:00"], ["Las Golondrinas", "10:05"], ["El Manzanito", "10:10"], ["El Prado", "10:15"], ["Camino La Mina", "10:25"], ["San Pedro", "10:28"], ["Las Arañas", "10:38"], ["Los Culenes", "10:44"], ["El Sauce", "10:48"]] },
+      { id: 4, salida: "11:30", cabecera: "Las Arañas", fin: "Loica Arriba", stops: [["Las Arañas", "11:30"], ["San Pedro", "11:40"], ["Camino La Mina", "11:45"], ["El Prado", "11:50"], ["El Manzanito", "11:55"], ["Las Golondrinas", "12:08"], ["Loica Arriba", "12:20"]] },
+      { id: 5, salida: "13:00", cabecera: "Loica Arriba", fin: "El Sauce", stops: [["Loica Arriba", "13:00"], ["Las Golondrinas", "13:12"], ["El Prado", "13:30"], ["Camino La Mina", "13:35"], ["San Pedro", "13:40"], ["Las Arañas", "13:50"], ["Los Culenes", "13:55"], ["El Sauce", "13:59"]] },
+      { id: 6, salida: "14:30", cabecera: "El Sauce", fin: "Nihue Alto", stops: [["El Sauce", "14:20"], ["Los Culenes", "14:25"], ["Las Arañas", "14:30"], ["San Pedro", "14:40"], ["Camino La Mina", "14:45"], ["El Prado", "14:50"], ["El Manzanito", "14:55"], ["Las Golondrinas", "15:08"], ["Nihue Alto", "15:20"]] },
+      { id: 7, salida: "16:00", cabecera: "Nihue Alto", fin: "El Sauce", stops: [["Nihue Alto", "16:00"], ["Las Golondrinas", "16:05"], ["El Manzanito", "16:10"], ["El Prado", "16:15"], ["Camino La Mina", "16:25"], ["San Pedro", "16:28"], ["Las Arañas", "16:38"], ["Los Culenes", "16:44"], ["El Sauce", "16:48"]] },
+      { id: 8, salida: "17:30", cabecera: "Las Arañas", fin: "Loica Arriba", stops: [["Las Arañas", "17:30"], ["San Pedro", "17:40"], ["Camino La Mina", "17:45"], ["El Prado", "17:50"], ["El Manzanito", "17:55"], ["Las Golondrinas", "18:08"], ["Loica Arriba", "18:20"]] }
+    ],
+    domingo: [
+      { id: 101, salida: "09:00", cabecera: "Loica Arriba", fin: "El Sauce", stops: [["Loica Arriba", "09:00"], ["Las Golondrinas", "09:12"], ["El Prado", "09:30"], ["Camino La Mina", "09:35"], ["San Pedro", "09:40"], ["Las Arañas", "09:50"], ["Los Culenes", "09:55"], ["El Sauce", "09:59"]] },
+      { id: 102, salida: "10:30", cabecera: "El Sauce", fin: "Nihue Alto", stops: [["El Sauce", "10:20"], ["Los Culenes", "10:25"], ["Las Arañas", "10:30"], ["San Pedro", "10:40"], ["Camino La Mina", "10:45"], ["El Prado", "10:50"], ["El Manzanito", "10:55"], ["Las Golondrinas", "11:08"], ["Nihue Alto", "11:20"]] },
+      { id: 103, salida: "12:00", cabecera: "Nihue Alto", fin: "El Sauce", stops: [["Nihue Alto", "12:00"], ["Las Golondrinas", "12:05"], ["El Manzanito", "12:10"], ["El Prado", "12:15"], ["Camino La Mina", "12:25"], ["San Pedro", "12:28"], ["Las Arañas", "12:38"], ["Los Culenes", "12:44"], ["El Sauce", "12:48"]] },
+      { id: 104, salida: "13:30", cabecera: "Las Arañas", fin: "Loica Arriba", stops: [["Las Arañas", "13:30"], ["San Pedro", "13:40"], ["Camino La Mina", "13:45"], ["El Prado", "13:50"], ["El Manzanito", "13:55"], ["Las Golondrinas", "14:08"], ["Loica Arriba", "14:20"]] },
+      { id: 105, salida: "15:00", cabecera: "Loica Arriba", fin: "El Sauce", stops: [["Loica Arriba", "15:00"], ["Las Golondrinas", "15:12"], ["El Prado", "15:30"], ["Camino La Mina", "15:35"], ["San Pedro", "15:40"], ["Las Arañas", "15:50"], ["Los Culenes", "15:55"], ["El Sauce", "15:59"]] },
+      { id: 106, salida: "16:30", cabecera: "El Sauce", fin: "Nihue Alto", stops: [["El Sauce", "16:20"], ["Los Culenes", "16:25"], ["Las Arañas", "16:30"], ["San Pedro", "16:40"], ["Camino La Mina", "16:45"], ["El Prado", "16:50"], ["El Manzanito", "16:55"], ["Las Golondrinas", "17:08"], ["Nihue Alto", "17:20"]] },
+      { id: 107, salida: "18:00", cabecera: "Nihue Alto", fin: "El Sauce", stops: [["Nihue Alto", "18:00"], ["Las Golondrinas", "18:05"], ["El Manzanito", "18:10"], ["El Prado", "18:15"], ["Camino La Mina", "18:25"], ["San Pedro", "18:28"], ["Las Arañas", "18:38"], ["Los Culenes", "18:44"], ["El Sauce", "18:48"]] },
+      { id: 108, salida: "19:30", cabecera: "Las Arañas", fin: "Loica Arriba", stops: [["Las Arañas", "19:30"], ["San Pedro", "19:40"], ["Camino La Mina", "19:45"], ["El Prado", "19:50"], ["El Manzanito", "19:55"], ["Las Golondrinas", "20:08"], ["Loica Arriba", "20:20"]] }
+    ]
+  };
+
+  function timeToMin(t) {
+    const [h, m] = t.split(':').map(Number);
+    return h * 60 + m;
+  }
+
+  function actualizarHoraActual() {
+    const now = new Date();
+    const h = String(now.getHours()).padStart(2, '0');
+    const m = String(now.getMinutes()).padStart(2, '0');
+    document.getElementById('horaConsulta').value = `${h}:${m}`;
+    const dayOfWeek = now.getDay();
+    document.getElementById('dia').value = (dayOfWeek === 0) ? "domingo" : "semana";
+  }
+
+  function obtenerUbicacion() {
+    if ("geolocation" in navigator) {
+      navigator.geolocation.getCurrentPosition((pos) => {
+        const lat = pos.coords.latitude;
+        const lon = pos.coords.longitude;
+        const paraderos = [
+          { nombre: "Loica Arriba", lat: -33.885, lon: -71.425 },
+          { nombre: "Las Golondrinas", lat: -33.895, lon: -71.415 },
+          { nombre: "El Manzanito", lat: -33.902, lon: -71.408 },
+          { nombre: "El Prado", lat: -33.910, lon: -71.400 },
+          { nombre: "Camino La Mina", lat: -33.918, lon: -71.395 },
+          { nombre: "San Pedro", lat: -33.925, lon: -71.390 },
+          { nombre: "Las Arañas", lat: -33.940, lon: -71.380 },
+          { nombre: "Los Culenes", lat: -33.950, lon: -71.370 },
+          { nombre: "El Sauce", lat: -33.958, lon: -71.365 }
+        ];
+        let cercano = paraderos[0];
+        let minDist = Infinity;
+        paraderos.forEach(p => {
+          const d = Math.hypot(p.lat - lat, p.lon - lon);
+          if (d < minDist) { minDist = d; cercano = p; }
+        });
+        document.getElementById('origen').value = cercano.nombre;
+        autoCalculate();
+        alert(`📍 Origen detectado: ${cercano.nombre}`);
+      }, () => {
+        alert("Activa el GPS para detectar tu paradero.");
+      });
+    }
+  }
+
+  function autoCalculate() {
+    const dia = document.getElementById('dia').value;
+    const origen = document.getElementById('origen').value;
+    const minConsulta = timeToMin(document.getElementById('horaConsulta').value);
+
+    const routes = SCHEDULES[dia];
+    let validOptions = [];
+
+    routes.forEach(r => {
+      const idxOrig = r.stops.findIndex(s => s[0] === origen);
+      if (idxOrig !== -1 && idxOrig < r.stops.length - 1) {
+        const timeOrig = r.stops[idxOrig][1];
+        const minOrig = timeToMin(timeOrig);
+        if (minOrig >= minConsulta) {
+          validOptions.push({
+            route: r, timeOrig, minDiff: minOrig - minConsulta, idxOrig
+          });
+        }
+      }
+    });
+
+    const resultsDiv = document.getElementById('results');
+    if (validOptions.length === 0) {
+      resultsDiv.innerHTML = `<div class="result-card" style="border-left-color:#ef4444;"><div class="result-title" style="color:#f87171;">🚫 No hay más micros disponibles desde ${origen} hoy</div></div>`;
+      return;
+    }
+
+    validOptions.sort((a, b) => a.minDiff - b.minDiff);
+
+    let html = '';
+    validOptions.forEach((opt, idx) => {
+      const r = opt.route;
+      
+      html += `
+        <div class="result-card" style="${idx > 0 ? 'border-left-color: var(--border-color);' : ''}">
+          <div class="result-header">
+            <span class="result-title">${idx === 0 ? 'Calibrado en tiempo real' : '⏱️ Siguiente Salida'}</span>
+            <span class="badge">${r.cabecera} ➔ ${r.fin}</span>
+          </div>
+          <div style="font-size: 14px; margin-bottom: 6px;">
+            Pasa por <b>${origen}</b> a las <b style="color:var(--accent); font-size:16px;">${opt.timeOrig} hrs</b>
+          </div>
+          <div class="dest-list">
+            <div style="font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase;">Horarios de llegada según destino:</div>
+      `;
+
+      for (let i = opt.idxOrig + 1; i < r.stops.length; i++) {
+        const st = r.stops[i];
+        html += `
+          <div class="dest-item">
+            <span>➔ ${st[0]}</span>
+            <b>${st[1]} hrs</b>
+          </div>
+        `;
+      }
+
+      html += `</div></div>`;
+    });
+
+    resultsDiv.innerHTML = html;
+  }
+
+  function switchTab(tabName) {
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    if (tabName === 'planner') {
+      document.querySelectorAll('.tab-btn')[0].classList.add('active');
+      document.getElementById('plannerTab').classList.remove('hidden');
+      document.getElementById('schedulesTab').classList.add('hidden');
+    } else {
+      document.querySelectorAll('.tab-btn')[1].classList.add('active');
+      document.getElementById('plannerTab').classList.add('hidden');
+      document.getElementById('schedulesTab').classList.remove('hidden');
+      renderScheduleTable();
+    }
+  }
+
+  function renderScheduleTable() {
+    const dia = document.getElementById('diaTabla').value;
+    const routes = SCHEDULES[dia];
+    let html = `<thead><tr><th>Salida</th><th>Recorrido</th><th>Golondrinas</th><th>San Pedro</th><th>Llegada</th></tr></thead><tbody>`;
+    routes.forEach(r => {
+      const gol = r.stops.find(s => s[0] === 'Las Golondrinas')?.[1] || '-';
+      const sp = r.stops.find(s => s[0] === 'San Pedro')?.[1] || '-';
+      html += `<tr><td><b>${r.salida}</b></td><td style="text-align:left;">${r.cabecera} ➔ ${r.fin}</td><td>${gol}</td><td>${sp}</td><td><b style="color:var(--accent);">${r.stops[r.stops.length-1][1]}</b></td></tr>`;
+    });
+    document.getElementById('tablaHorarios').innerHTML = html + `</tbody>`;
+  }
+
+  actualizarHoraActual();
+  autoCalculate();
+</script>
+
+</body>
+</html>
