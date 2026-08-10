@@ -121,7 +121,19 @@
       align-items: center;
       justify-content: center;
       gap: 6px;
+      margin-bottom: 10px;
+    }
+
+    .gps-toast {
+      background-color: #065f46;
+      color: #34d399;
+      font-size: 13px;
+      font-weight: 600;
+      padding: 10px 12px;
+      border-radius: 8px;
       margin-bottom: 14px;
+      text-align: center;
+      border: 1px solid #059669;
     }
 
     .tabs {
@@ -221,7 +233,7 @@
 
 <div class="app-container">
   <header>
-    <h1>🚍 Micros San Pedro</h1>
+    <h1> theoretical Micros San Pedro</h1>
     <p>Consulta por origen y hora actual</p>
   </header>
 
@@ -232,6 +244,7 @@
 
   <div id="plannerTab" class="card">
     <button class="btn btn-gps" onclick="obtenerUbicacion()">📍 Detectar mi Paradero (GPS)</button>
+    <div id="gpsToast" class="gps-toast hidden"></div>
 
     <div class="form-group">
       <label for="dia">Día de viaje</label>
@@ -283,14 +296,14 @@
 <script>
   const SCHEDULES = {
     semana: [
-      { id: 1, salida: "07:00", cabecera: "Loica Arriba", fin: "El Sauce", stops: [["Loica Arriba", "07:00"], ["Las Golondrinas", "07:12"], ["El Manzanito", "07:18"], ["El Prado", "07:30"], ["Camino La Mina", "07:35"], ["San Pedro", "07:40"], ["Las Arañas", "07:50"], ["Los Culenes", "07:55"], ["El Sauce", "07:59"]] },
-      { id: 2, salida: "08:30", cabecera: "El Sauce", fin: "Nihue Alto", stops: [["El Sauce", "08:20"], ["Los Culenes", "08:25"], ["Las Arañas", "08:30"], ["San Pedro", "08:40"], ["Camino La Mina", "08:45"], ["El Prado", "08:50"], ["El Manzanito", "08:55"], ["Las Golondrinas", "09:08"], ["Nihue Alto", "09:20"]] },
-      { id: 3, salida: "10:00", cabecera: "Nihue Alto", fin: "El Sauce", stops: [["Nihue Alto", "10:00"], ["Las Golondrinas", "10:05"], ["El Manzanito", "10:10"], ["El Prado", "10:15"], ["Camino La Mina", "10:25"], ["San Pedro", "10:28"], ["Las Arañas", "10:38"], ["Los Culenes", "10:44"], ["El Sauce", "10:48"]] },
-      { id: 4, salida: "11:30", cabecera: "Las Arañas", fin: "Loica Arriba", stops: [["Las Arañas", "11:30"], ["San Pedro", "11:40"], ["Camino La Mina", "11:45"], ["El Prado", "11:50"], ["El Manzanito", "11:55"], ["Las Golondrinas", "12:08"], ["Loica Arriba", "12:20"]] },
-      { id: 5, salida: "13:00", cabecera: "Loica Arriba", fin: "El Sauce", stops: [["Loica Arriba", "13:00"], ["Las Golondrinas", "13:12"], ["El Manzanito", "13:18"], ["El Prado", "13:30"], ["Camino La Mina", "13:35"], ["San Pedro", "13:40"], ["Las Arañas", "13:50"], ["Los Culenes", "13:55"], ["El Sauce", "13:59"]] },
-      { id: 6, salida: "14:30", cabecera: "El Sauce", fin: "Nihue Alto", stops: [["El Sauce", "14:20"], ["Los Culenes", "14:25"], ["Las Arañas", "14:30"], ["San Pedro", "14:40"], ["Camino La Mina", "14:45"], ["El Prado", "14:50"], ["El Manzanito", "14:55"], ["Las Golondrinas", "15:08"], ["Nihue Alto", "15:20"]] },
-      { id: 7, salida: "16:00", cabecera: "Nihue Alto", fin: "El Sauce", stops: [["Nihue Alto", "16:00"], ["Las Golondrinas", "16:05"], ["El Manzanito", "16:10"], ["El Prado", "16:15"], ["Camino La Mina", "16:25"], ["San Pedro", "16:28"], ["Las Arañas", "16:38"], ["Los Culenes", "16:44"], ["El Sauce", "16:48"]] },
-      { id: 8, salida: "17:30", cabecera: "Las Arañas", fin: "Loica Arriba", stops: [["Las Arañas", "17:30"], ["San Pedro", "17:40"], ["Camino La Mina", "17:45"], ["El Prado", "17:50"], ["El Manzanito", "17:55"], ["Las Golondrinas", "18:08"], ["Loica Arriba", "18:20"]] }
+      { id: 1, salida: "06:50", cabecera: "Loica Arriba", fin: "El Sauce", stops: [["Loica Arriba", "06:50"], ["Las Golondrinas", "07:05"], ["El Manzanito", "07:10"], ["El Prado", "07:15"], ["Camino La Mina", "07:20"], ["San Pedro", "07:30"], ["Las Arañas", "07:40"], ["Los Culenes", "07:43"], ["El Sauce", "07:50"]] },
+      { id: 2, salida: "08:30", cabecera: "El Sauce", fin: "Nihue Alto", stops: [["El Sauce", "08:30"], ["Los Culenes", "08:40"], ["Las Arañas", "08:45"], ["San Pedro", "08:50"], ["Camino La Mina", "08:55"], ["El Prado", "09:05"], ["El Manzanito", "09:10"], ["Las Golondrinas", "09:15"], ["Nihue Alto", "09:20"]] },
+      { id: 3, salida: "10:00", cabecera: "Nihue Alto", fin: "El Sauce", stops: [["Nihue Alto", "10:00"], ["Las Golondrinas", "10:05"], ["El Manzanito", "10:10"], ["El Prado", "10:15"], ["Camino La Mina", "10:25"], ["San Pedro", "10:30"], ["Las Arañas", "10:38"], ["Los Culenes", "10:40"], ["El Sauce", "10:50"]] },
+      { id: 4, salida: "11:30", cabecera: "Las Arañas", fin: "Loica Arriba", stops: [["Las Arañas", "11:30"], ["San Pedro", "11:40"], ["Camino La Mina", "11:45"], ["El Prado", "11:50"], ["El Manzanito", "11:55"], ["Las Golondrinas", "12:05"], ["Loica Arriba", "12:20"]] },
+      { id: 5, salida: "13:00", cabecera: "Loica Arriba", fin: "El Sauce", stops: [["Loica Arriba", "13:00"], ["Las Golondrinas", "13:15"], ["El Manzanito", "13:25"], ["El Prado", "13:30"], ["Camino La Mina", "13:35"], ["San Pedro", "13:40"], ["Las Arañas", "13:50"], ["Los Culenes", "13:52"], ["El Sauce", "13:54"]] },
+      { id: 6, salida: "14:30", cabecera: "El Sauce", fin: "Nihue Alto", stops: [["El Sauce", "14:30"], ["Los Culenes", "14:40"], ["Las Arañas", "14:43"], ["San Pedro", "14:50"], ["Camino La Mina", "14:55"], ["El Prado", "15:05"], ["El Manzanito", "15:10"], ["Las Golondrinas", "15:15"], ["Nihue Alto", "15:20"]] },
+      { id: 7, salida: "16:00", cabecera: "Nihue Alto", fin: "El Sauce", stops: [["Nihue Alto", "16:00"], ["Las Golondrinas", "16:05"], ["El Manzanito", "16:10"], ["El Prado", "16:15"], ["Camino La Mina", "16:25"], ["San Pedro", "16:30"], ["Las Arañas", "16:38"], ["Los Culenes", "16:40"], ["El Sauce", "16:50"]] },
+      { id: 8, salida: "17:30", cabecera: "Las Arañas", fin: "Loica Arriba", stops: [["Las Arañas", "17:30"], ["San Pedro", "17:40"], ["Camino La Mina", "17:45"], ["El Prado", "17:50"], ["El Manzanito", "17:55"], ["Las Golondrinas", "18:05"], ["Loica Arriba", "18:20"]] }
     ],
     domingo: [
       { id: 101, salida: "09:00", cabecera: "Loica Arriba", fin: "El Sauce", stops: [["Loica Arriba", "09:00"], ["Las Golondrinas", "09:12"], ["El Manzanito", "09:18"], ["El Prado", "09:30"], ["Camino La Mina", "09:35"], ["San Pedro", "09:40"], ["Las Arañas", "09:50"], ["Los Culenes", "09:55"], ["El Sauce", "09:59"]] },
@@ -349,9 +362,21 @@
 
         document.getElementById('origen').value = cercano.nombre;
         autoCalculate();
-        alert(`📍 Paradero detectado: ${cercano.nombre}`);
+        
+        // Mostrar mensaje dentro de la interfaz en lugar de ventana emergente
+        const toast = document.getElementById('gpsToast');
+        toast.innerText = `📍 Paradero detectado: ${cercano.nombre}`;
+        toast.classList.remove('hidden');
+        setTimeout(() => toast.classList.add('hidden'), 4000);
+
       }, () => {
-        alert("Activa el GPS para detectar tu paradero.");
+        const toast = document.getElementById('gpsToast');
+        toast.innerText = "Activa el GPS para detectar tu paradero.";
+        toast.style.backgroundColor = "#7f1d1d";
+        toast.style.color = "#fca5a5";
+        toast.style.borderColor = "#dc2626";
+        toast.classList.remove('hidden');
+        setTimeout(() => toast.classList.add('hidden'), 4000);
       });
     }
   }
