@@ -275,7 +275,6 @@
       </select>
     </div>
 
-    <!-- Campo Origen Bloqueado -->
     <div class="form-group">
       <label for="origen">Tu ubicación detectada (Origen)</label>
       <select id="origen" disabled>
@@ -309,7 +308,6 @@
       </select>
     </div>
 
-    <!-- Campo Hora del Celular Bloqueado -->
     <div class="form-group">
       <label for="horaConsulta">Hora Actual del Celular</label>
       <input type="time" id="horaConsulta" disabled>
@@ -360,6 +358,20 @@
   function timeToMin(t) {
     const [h, m] = t.split(':').map(Number);
     return h * 60 + m;
+  }
+
+  // Convertir minutos simples a formato Horas y Minutos (Ej: 145 min -> "2 h 25 min")
+  function formatearTiempo(totalMinutos) {
+    if (totalMinutos === 0) return "⚡ ¡Pasa ahora mismo!";
+    
+    const horas = Math.floor(totalMinutos / 60);
+    const mins = totalMinutos % 60;
+
+    if (horas > 0) {
+      return `⏳ Llega en ${horas} h ${mins > 0 ? `${mins} min` : ''}`;
+    } else {
+      return `⏳ Llega en ${mins} min`;
+    }
   }
 
   function actualizarHoraActual() {
@@ -569,7 +581,6 @@
           });
         });
 
-        // Sincronizar ubicación en el select de origen
         const select = document.getElementById('origen');
         select.value = cercano.nombre;
         
@@ -603,7 +614,7 @@
   }
 
   function autoCalculate() {
-    actualizarHoraActual(); // Sincroniza la hora exacta del teléfono
+    actualizarHoraActual();
 
     const dia = document.getElementById('dia').value;
     const origen = document.getElementById('origen').value;
@@ -657,15 +668,7 @@
     validOptions.forEach((opt, idx) => {
       const r = opt.route;
       const minFaltantes = opt.minDiff;
-      let tiempoTexto = "";
-
-      if (minFaltantes === 0) {
-        tiempoTexto = "⚡ ¡Pasa ahora mismo!";
-      } else if (minFaltantes === 1) {
-        tiempoTexto = "⏳ Llega en 1 minuto";
-      } else {
-        tiempoTexto = `⏳ Llega en ${minFaltantes} minutos`;
-      }
+      const tiempoTexto = formatearTiempo(minFaltantes);
       
       html += `
         <div class="result-card" style="${idx > 0 ? 'border-left-color: var(--border-color);' : ''}">
@@ -682,7 +685,7 @@
           </div>
           <div style="font-size: 14px; margin-bottom: 6px;">
             Pasa por <b>${origen}</b> a las <b style="color:var(--accent); font-size:16px;">${opt.timeOrig} hrs</b>
-            ${idx > 0 ? `<span style="color:var(--text-muted); font-size:12px;"> (en ${minFaltantes} min)</span>` : ''}
+            ${idx > 0 ? `<span style="color:var(--text-muted); font-size:12px;"> (en ${formatearTiempo(minFaltantes).replace('⏳ Llega en ', '')})</span>` : ''}
           </div>
           <div class="dest-list">
             <div style="font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase;">Horarios de llegada según destino:</div>
@@ -732,7 +735,6 @@
     document.getElementById('tablaHorarios').innerHTML = html + `</tbody>`;
   }
 
-  // Actualización periódica de la hora cada 30 segundos
   setInterval(() => {
     actualizarHoraActual();
     autoCalculate();
