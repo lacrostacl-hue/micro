@@ -23,6 +23,7 @@
       --border-color: #334155;
       --badge-bg: #0369a1;
       --gps-btn: #10b981;
+      --promo-bg: #d97706;
     }
 
     * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
@@ -143,7 +144,6 @@
       line-height: 1.4;
     }
 
-    /* Navegación por pestañas deslizable/adaptable */
     .tabs {
       display: grid;
       grid-template-columns: repeat(2, 1fr);
@@ -231,7 +231,59 @@
       font-size: 13px;
     }
 
-    /* Estilos Sección Noticias */
+    /* ESTILOS BANNER PUBLICITARIO / DESTACADO */
+    .ad-card {
+      background: linear-gradient(135deg, #1e1b4b 0%, #311b92 100%);
+      border: 1px solid #6366f1;
+      border-radius: 12px;
+      padding: 14px;
+      margin-bottom: 14px;
+      position: relative;
+    }
+
+    .ad-badge {
+      position: absolute;
+      top: 10px;
+      right: 12px;
+      background-color: #f59e0b;
+      color: #0f172a;
+      font-size: 9px;
+      font-weight: 800;
+      padding: 2px 6px;
+      border-radius: 4px;
+      text-transform: uppercase;
+    }
+
+    .ad-title {
+      font-size: 16px;
+      font-weight: 800;
+      color: #ffffff;
+      margin-bottom: 4px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .ad-desc {
+      font-size: 12px;
+      color: #c7d2fe;
+      margin-bottom: 10px;
+      line-height: 1.3;
+    }
+
+    .ad-btn {
+      display: inline-block;
+      background-color: #22c55e;
+      color: #ffffff;
+      text-decoration: none;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 8px 14px;
+      border-radius: 8px;
+      text-align: center;
+    }
+
+    /* ESTILOS NOTICIAS Y SERVICIOS */
     .news-item {
       background-color: #0f172a;
       border-radius: 10px;
@@ -257,7 +309,6 @@
       line-height: 1.4;
     }
 
-    /* Estilos Sección Servicios */
     .service-link {
       display: flex;
       align-items: center;
@@ -313,19 +364,27 @@
 <div class="app-container">
   <header>
     <h1>Micros San Pedro</h1>
-    <p>Información de transporte y comunidad</p>
+    <p>Información de transporte y comercio local</p>
   </header>
 
-  <!-- Botones de Navegación principales -->
   <div class="tabs">
     <button class="tab-btn active" onclick="switchTab('planner')">🔍 Consulta Viaje</button>
     <button class="tab-btn" onclick="switchTab('schedules')">📋 Planilla Horarios</button>
-    <button class="tab-btn" onclick="switchTab('news')">📰 Noticias</button>
+    <button class="tab-btn" onclick="switchTab('news')">📰 Noticias y Comercio</button>
     <button class="tab-btn" onclick="switchTab('services')">🛠️ Servicios</button>
   </div>
 
   <!-- PESTAÑA 1: PLANIFICADOR DE VIAJE -->
   <div id="plannerTab" class="card">
+    
+    <!-- BANNER PUBLICITARIO PRINCIPAL (EJEMPLO LACROSTA.CL) -->
+    <div class="ad-card">
+      <span class="ad-badge">Auspiciador</span>
+      <div class="ad-title">🍕 La Crosta - Comida Rápida</div>
+      <div class="ad-desc">Las mejores pizzas, hamburguesas y promociones en San Pedro. ¡Haz tu pedido antes de tomar la micro!</div>
+      <a href="https://lacrosta.cl" target="_blank" class="ad-btn">🌐 Visitar lacrosta.cl / Pedir</a>
+    </div>
+
     <button class="btn btn-gps" id="btnGps" onclick="obtenerUbicacion()">📍 Detectar mi Paradero (GPS)</button>
     <div id="gpsToast" class="gps-toast hidden"></div>
 
@@ -393,20 +452,33 @@
     </div>
   </div>
 
-  <!-- PESTAÑA 3: NOTICIAS LOCALE S -->
+  <!-- PESTAÑA 3: NOTICIAS Y COMERCIO LOCAL -->
   <div id="newsTab" class="card hidden">
-    <h3 style="margin-top:0; color:var(--accent);">Avisos y Noticias Locales</h3>
+    <h3 style="margin-top:0; color:var(--accent);">Noticias y Locales Comerciales</h3>
     
+    <!-- ANUNCIO LACROSTA -->
+    <div class="news-item" style="border-color:#6366f1;">
+      <div class="news-date">🍔 COMIDA RÁPIDA / DESTACADO</div>
+      <div class="news-title">Lacrosta.cl</div>
+      <div class="news-body">Disfruta del mejor sabor local. Pizzas artesanales, sándwiches y papas fritas con despacho a domicilio o retiro.</div>
+      <div style="margin-top:10px;">
+        <a href="https://lacrosta.cl" target="_blank" class="ad-btn" style="background:#6366f1;">🌐 Pedir en lacrosta.cl</a>
+      </div>
+    </div>
+
     <div class="news-item">
       <div class="news-date">📌 AVISO DE RECORRIDO</div>
       <div class="news-title">Refuerzo de recorridos en horario punta</div>
       <div class="news-body">Se recuerdan los recorridos matutinos desde Loica Arriba a las 07:00 hrs con conexión directa a San Pedro y Las Arañas.</div>
     </div>
 
-    <div class="news-item">
-      <div class="news-date">📢 COMUNIDAD</div>
-      <div class="news-title">Uso de la Aplicación de Micros</div>
-      <div class="news-body">Recuerda activar el GPS de tu celular al presionar el botón verde para detectar automáticamente el paradero más cercano.</div>
+    <!-- TARJETA PUBLICITA AQUÍ -->
+    <div class="news-item" style="background:#1e293b; text-align:center; border:1px dashed var(--accent);">
+      <div class="news-title" style="color:var(--accent);">¿Tienes un local comercial?</div>
+      <div class="news-body">Publicita tu pizzería, almacén o negocio en la App de Micros San Pedro.</div>
+      <div style="margin-top:10px;">
+        <a href="https://wa.me/56912345678?text=Hola,%20me%20gustaria%20publicitar%20mi%20local%20en%20la%20app%20de%20micros" target="_blank" class="ad-btn" style="background:#22c55e;">📲 Publicitar mi Negocio</a>
+      </div>
     </div>
   </div>
 
@@ -813,11 +885,9 @@
     resultsDiv.innerHTML = html;
   }
 
-  // Cambio de pestañas
   function switchTab(tabName) {
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
     
-    // Ocultar todas
     document.getElementById('plannerTab').classList.add('hidden');
     document.getElementById('schedulesTab').classList.add('hidden');
     document.getElementById('newsTab').classList.add('hidden');
