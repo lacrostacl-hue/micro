@@ -235,11 +235,11 @@
 <div class="app-container">
   <header>
     <h1> Micros San Pedro</h1>
-    <p>Consulta por origen y hora actual</p>
+    <p>Consulta por origen, destino y hora</p>
   </header>
 
   <div class="tabs">
-    <button class="tab-btn active" onclick="switchTab('planner')">🔍 Consulta por Origen</button>
+    <button class="tab-btn active" onclick="switchTab('planner')">🔍 Consulta de Viaje</button>
     <button class="tab-btn" onclick="switchTab('schedules')">📋 Planilla Completa</button>
   </div>
 
@@ -261,6 +261,23 @@
         <option value="Loica Arriba">Loica Arriba</option>
         <option value="Nihue Alto">Nihue Alto</option>
         <option value="Las Golondrinas" selected>Las Golondrinas</option>
+        <option value="El Manzanito">El Manzanito</option>
+        <option value="El Prado">El Prado</option>
+        <option value="Camino La Mina">Camino La Mina</option>
+        <option value="San Pedro">San Pedro</option>
+        <option value="Las Arañas">Las Arañas</option>
+        <option value="Los Culenes">Los Culenes</option>
+        <option value="El Sauce">El Sauce</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="destino">¿A dónde vas? (Destino)</label>
+      <select id="destino" onchange="autoCalculate()">
+        <option value="todos">-- Todos los destinos --</option>
+        <option value="Loica Arriba">Loica Arriba</option>
+        <option value="Nihue Alto">Nihue Alto</option>
+        <option value="Las Golondrinas">Las Golondrinas</option>
         <option value="El Manzanito">El Manzanito</option>
         <option value="El Prado">El Prado</option>
         <option value="Camino La Mina">Camino La Mina</option>
@@ -484,6 +501,7 @@
   function autoCalculate() {
     const dia = document.getElementById('dia').value;
     const origen = document.getElementById('origen').value;
+    const destino = document.getElementById('destino').value;
     const minConsulta = timeToMin(document.getElementById('horaConsulta').value);
 
     const routes = SCHEDULES[dia];
@@ -491,20 +509,40 @@
 
     routes.forEach(r => {
       const idxOrig = r.stops.findIndex(s => s[0] === origen);
+      
       if (idxOrig !== -1 && idxOrig < r.stops.length - 1) {
-        const timeOrig = r.stops[idxOrig][1];
-        const minOrig = timeToMin(timeOrig);
-        if (minOrig >= minConsulta) {
-          validOptions.push({
-            route: r, timeOrig, minDiff: minOrig - minConsulta, idxOrig
-          });
+        let sirvePorDestino = true;
+        let idxDest = -1;
+
+        if (destino !== "todos") {
+          idxDest = r.stops.findIndex(s => s[0] === destino);
+          // La micro sirve solo si pasa por el destino Y pasa DESPUÉS del origen
+          if (idxDest === -1 || idxDest <= idxOrig) {
+            sirvePorDestino = false;
+          }
+        }
+
+        if (sirvePorDestino) {
+          const timeOrig = r.stops[idxOrig][1];
+          const minOrig = timeToMin(timeOrig);
+          if (minOrig >= minConsulta) {
+            validOptions.push({
+              route: r, timeOrig, minDiff: minOrig - minConsulta, idxOrig, idxDest
+            });
+          }
         }
       }
     });
 
     const resultsDiv = document.getElementById('results');
     if (validOptions.length === 0) {
-      resultsDiv.innerHTML = `<div class="result-card" style="border-left-color:#ef4444;"><div class="result-title" style="color:#f87171;">🚫 No hay más micros disponibles desde ${origen} hoy</div></div>`;
+      let msg = `🚫 No hay micros disponibles desde <b>${origen}</b>`;
+      if (destino !== "todos") {
+        msg += ` con destino a <b>${destino}</b>`;
+      }
+      msg += ` por el resto del día.`;
+      
+      resultsDiv.innerHTML = `<div class="result-card" style="border-left-color:#ef4444;"><div class="result-title" style="color:#f87171;">${msg}</div></div>`;
       return;
     }
 
@@ -527,11 +565,14 @@
             <div style="font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase;">Horarios de llegada según destino:</div>
       `;
 
+      // Si seleccionó un destino específico, mostrar resaltado ese destino
       for (let i = opt.idxOrig + 1; i < r.stops.length; i++) {
         const st = r.stops[i];
+        const esDestinoBuscado = (destino !== "todos" && st[0] === destino);
+        
         html += `
-          <div class="dest-item">
-            <span>➔ ${st[0]}</span>
+          <div class="dest-item" style="${esDestinoBuscado ? 'color: var(--accent); font-weight:700;' : ''}">
+            <span>${esDestinoBuscado ? '🎯' : '➔'} ${st[0]}</span>
             <b>${st[1]} hrs</b>
           </div>
         `;
