@@ -23,6 +23,7 @@
       --border-color: #334155;
       --badge-bg: #0369a1;
       --gps-btn: #10b981;
+      --timer-bg: #0284c7;
     }
 
     * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
@@ -99,6 +100,12 @@
       font-size: 15px;
       outline: none;
       transition: border-color 0.2s;
+    }
+
+    select:disabled, input:disabled {
+      opacity: 0.7;
+      cursor: not-allowed;
+      background-color: #1a2332;
     }
 
     .btn {
@@ -193,6 +200,19 @@
       border-radius: 12px;
     }
 
+    .countdown-banner {
+      background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+      color: #ffffff;
+      padding: 10px 12px;
+      border-radius: 8px;
+      font-size: 14px;
+      font-weight: 700;
+      margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
     .dest-list {
       display: flex;
       flex-direction: column;
@@ -255,9 +275,10 @@
       </select>
     </div>
 
+    <!-- Campo Origen Bloqueado -->
     <div class="form-group">
-      <label for="origen">¿Dónde estás? (Origen)</label>
-      <select id="origen" onchange="autoCalculate()">
+      <label for="origen">Tu ubicación detectada (Origen)</label>
+      <select id="origen" disabled>
         <option value="Loica Arriba">Loica Arriba</option>
         <option value="Nihue Alto">Nihue Alto</option>
         <option value="Las Golondrinas" selected>Las Golondrinas</option>
@@ -288,9 +309,10 @@
       </select>
     </div>
 
+    <!-- Campo Hora del Celular Bloqueado -->
     <div class="form-group">
-      <label for="horaConsulta">Hora Actual</label>
-      <input type="time" id="horaConsulta" onchange="autoCalculate()">
+      <label for="horaConsulta">Hora Actual del Celular</label>
+      <input type="time" id="horaConsulta" disabled>
     </div>
 
     <div id="results" class="results-section" style="margin-top: 16px;"></div>
@@ -547,15 +569,17 @@
           });
         });
 
+        // Sincronizar ubicación en el select de origen
         const select = document.getElementById('origen');
         select.value = cercano.nombre;
         
+        actualizarHoraActual();
         autoCalculate();
 
         btn.innerText = "📍 Detectar mi Paradero (GPS)";
         btn.disabled = false;
         
-        toast.innerHTML = `📍 <b>${cercano.nombre}</b> (${minDist.toFixed(1)} km)<br><span style="font-size:10px; opacity:0.8;">Coords GPS: ${lat.toFixed(4)}, ${lon.toFixed(4)}</span>`;
+        toast.innerHTML = `📍 Paradero: <b>${cercano.nombre}</b> (${minDist.toFixed(1)} km)<br><span style="font-size:10px; opacity:0.8;">Coords GPS: ${lat.toFixed(4)}, ${lon.toFixed(4)}</span>`;
         toast.style.backgroundColor = "#065f46";
         toast.style.color = "#34d399";
         toast.style.borderColor = "#059669";
@@ -579,6 +603,8 @@
   }
 
   function autoCalculate() {
+    actualizarHoraActual(); // Sincroniza la hora exacta del teléfono
+
     const dia = document.getElementById('dia').value;
     const origen = document.getElementById('origen').value;
     const destino = document.getElementById('destino').value;
@@ -630,15 +656,33 @@
     let html = '';
     validOptions.forEach((opt, idx) => {
       const r = opt.route;
+      const minFaltantes = opt.minDiff;
+      let tiempoTexto = "";
+
+      if (minFaltantes === 0) {
+        tiempoTexto = "⚡ ¡Pasa ahora mismo!";
+      } else if (minFaltantes === 1) {
+        tiempoTexto = "⏳ Llega en 1 minuto";
+      } else {
+        tiempoTexto = `⏳ Llega en ${minFaltantes} minutos`;
+      }
       
       html += `
         <div class="result-card" style="${idx > 0 ? 'border-left-color: var(--border-color);' : ''}">
+          ${idx === 0 ? `
+            <div class="countdown-banner">
+              <span>🚀 Próxima micro</span>
+              <span>${tiempoTexto}</span>
+            </div>
+          ` : ''}
+
           <div class="result-header">
-            <span class="result-title">${idx === 0 ? 'Calibrado en tiempo real' : '⏱️ Siguiente Salida'}</span>
+            <span class="result-title">${idx === 0 ? 'Micro más cercana' : '⏱️ Siguiente Salida'}</span>
             <span class="badge">${r.cabecera} ➔ ${r.fin}</span>
           </div>
           <div style="font-size: 14px; margin-bottom: 6px;">
             Pasa por <b>${origen}</b> a las <b style="color:var(--accent); font-size:16px;">${opt.timeOrig} hrs</b>
+            ${idx > 0 ? `<span style="color:var(--text-muted); font-size:12px;"> (en ${minFaltantes} min)</span>` : ''}
           </div>
           <div class="dest-list">
             <div style="font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase;">Horarios de llegada según destino:</div>
@@ -687,6 +731,12 @@
     });
     document.getElementById('tablaHorarios').innerHTML = html + `</tbody>`;
   }
+
+  // Actualización periódica de la hora cada 30 segundos
+  setInterval(() => {
+    actualizarHoraActual();
+    autoCalculate();
+  }, 30000);
 
   actualizarHoraActual();
   autoCalculate();
