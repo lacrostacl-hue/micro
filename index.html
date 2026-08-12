@@ -234,7 +234,7 @@
 
 <div class="app-container">
   <header>
-    <h1> Horarios Micros San Pedro</h1>
+    <h1> theoretical Micros San Pedro</h1>
     <p>Consulta por origen y hora actual</p>
   </header>
 
@@ -355,34 +355,49 @@
         const lat = pos.coords.latitude;
         const lon = pos.coords.longitude;
         
+        // Mapeo con los 10 puntos de Camino La Mina
         const paraderos = [
-          { nombre: "El Prado", lat: -33.918816, lon: -71.509085 },
-          { nombre: "Camino La Mina", lat: -33.906122, lon: -71.469876 },
-          { nombre: "San Pedro", lat: -33.894460, lon: -71.454659 },
-          { nombre: "Las Arañas", lat: -33.909715, lon: -71.414746 },
-          { nombre: "Los Culenes", lat: -33.896697, lon: -71.403104 },
-          { nombre: "El Sauce", lat: -33.876012, lon: -71.382774 },
-          { nombre: "Loica Arriba", lat: -33.976984, lon: -71.466745 },
-          { nombre: "Las Golondrinas", lat: -33.955581, lon: -71.539632 },
-          { nombre: "Nihue Alto", lat: -33.983248, lon: -71.550411 }
+          { nombre: "El Prado", puntos: [{ lat: -33.918816, lon: -71.509085 }] },
+          { 
+            nombre: "Camino La Mina", 
+            puntos: [
+              { lat: -33.8926436, lon: -71.4641949 },
+              { lat: -33.8917886, lon: -71.4683147 },
+              { lat: -33.896847,  lon: -71.4690014 },
+              { lat: -33.9034012, lon: -71.4687439 },
+              { lat: -33.9056807, lon: -71.4692589 },
+              { lat: -33.908815,  lon: -71.4719196 },
+              { lat: -33.9111657, lon: -71.4722629 },
+              { lat: -33.9136588, lon: -71.4753528 },
+              { lat: -33.9132314, lon: -71.4785286 },
+              { lat: -33.9197842, lon: -71.4787002 }
+            ] 
+          },
+          { nombre: "San Pedro", puntos: [{ lat: -33.894460, lon: -71.454659 }] },
+          { nombre: "Las Arañas", puntos: [{ lat: -33.909715, lon: -71.414746 }] },
+          { nombre: "Los Culenes", puntos: [{ lat: -33.896697, lon: -71.403104 }] },
+          { nombre: "El Sauce", puntos: [{ lat: -33.876012, lon: -71.382774 }] },
+          { nombre: "Loica Arriba", puntos: [{ lat: -33.976984, lon: -71.466745 }] },
+          { nombre: "Las Golondrinas", puntos: [{ lat: -33.955581, lon: -71.539632 }] },
+          { nombre: "Nihue Alto", puntos: [{ lat: -33.983248, lon: -71.550411 }] }
         ];
 
         let cercano = paraderos[0];
         let minDist = Infinity;
         
         paraderos.forEach(p => {
-          const d = calcularDistanciaKm(lat, lon, p.lat, p.lon);
-          if (d < minDist) { 
-            minDist = d; 
-            cercano = p; 
-          }
+          p.puntos.forEach(pt => {
+            const d = calcularDistanciaKm(lat, lon, pt.lat, pt.lon);
+            if (d < minDist) { 
+              minDist = d; 
+              cercano = p; 
+            }
+          });
         });
 
-        // Cambiar dinámicamente la opción en el desplegable
         const select = document.getElementById('origen');
         select.value = cercano.nombre;
         
-        // Disparar evento para forzar recálculo
         autoCalculate();
 
         btn.innerText = "📍 Detectar mi Paradero (GPS)";
@@ -406,7 +421,7 @@
       }, {
         enableHighAccuracy: true,
         timeout: 15000,
-        maximumAge: 0 // No usar coordenadas guardadas en caché
+        maximumAge: 0
       });
     }
   }
@@ -481,7 +496,7 @@
       document.getElementById('schedulesTab').classList.add('hidden');
     } else {
       document.querySelectorAll('.tab-btn')[1].classList.add('active');
-      document.getElementById('plannerTab').classList.add('hidden');
+      document.getElementById('plannerTab').classList.hidden = true;
       document.getElementById('schedulesTab').classList.remove('hidden');
       renderScheduleTable();
     }
