@@ -23,7 +23,6 @@
       --border-color: #334155;
       --badge-bg: #0369a1;
       --gps-btn: #10b981;
-      --timer-bg: #0284c7;
     }
 
     * { box-sizing: border-box; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; }
@@ -144,30 +143,34 @@
       line-height: 1.4;
     }
 
+    /* Navegación por pestañas deslizable/adaptable */
     .tabs {
-      display: flex;
-      gap: 8px;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 6px;
       background-color: #0f172a;
-      padding: 4px;
-      border-radius: 10px;
-      margin-bottom: 16px;
+      padding: 6px;
+      border-radius: 12px;
+      margin-bottom: 12px;
     }
 
     .tab-btn {
-      flex: 1;
-      padding: 8px;
+      padding: 10px 6px;
       border: none;
       border-radius: 8px;
       background: none;
       color: var(--text-muted);
-      font-size: 13px;
+      font-size: 12px;
       font-weight: 600;
       cursor: pointer;
+      text-align: center;
+      transition: all 0.2s;
     }
 
     .tab-btn.active {
       background-color: var(--card-bg);
       color: var(--accent);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
     }
 
     .result-card {
@@ -228,6 +231,61 @@
       font-size: 13px;
     }
 
+    /* Estilos Sección Noticias */
+    .news-item {
+      background-color: #0f172a;
+      border-radius: 10px;
+      padding: 14px;
+      margin-bottom: 12px;
+      border: 1px solid var(--border-color);
+    }
+    .news-date {
+      font-size: 11px;
+      color: var(--accent);
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+    .news-title {
+      font-size: 15px;
+      font-weight: 700;
+      margin-bottom: 6px;
+      color: var(--text-main);
+    }
+    .news-body {
+      font-size: 13px;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    /* Estilos Sección Servicios */
+    .service-link {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background-color: #0f172a;
+      padding: 12px 14px;
+      border-radius: 10px;
+      margin-bottom: 10px;
+      text-decoration: none;
+      color: var(--text-main);
+      border: 1px solid var(--border-color);
+    }
+    .service-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-weight: 600;
+      font-size: 14px;
+    }
+    .service-btn-call {
+      background-color: #0284c7;
+      color: #ffffff;
+      font-size: 12px;
+      font-weight: 700;
+      padding: 6px 12px;
+      border-radius: 6px;
+    }
+
     .full-schedule-table {
       width: 100%;
       border-collapse: collapse;
@@ -255,14 +313,18 @@
 <div class="app-container">
   <header>
     <h1>Micros San Pedro</h1>
-    <p>Consulta por origen, destino y hora</p>
+    <p>Información de transporte y comunidad</p>
   </header>
 
+  <!-- Botones de Navegación principales -->
   <div class="tabs">
-    <button class="tab-btn active" onclick="switchTab('planner')">🔍 Consulta de Viaje</button>
-    <button class="tab-btn" onclick="switchTab('schedules')">📋 Planilla Completa</button>
+    <button class="tab-btn active" onclick="switchTab('planner')">🔍 Consulta Viaje</button>
+    <button class="tab-btn" onclick="switchTab('schedules')">📋 Planilla Horarios</button>
+    <button class="tab-btn" onclick="switchTab('news')">📰 Noticias</button>
+    <button class="tab-btn" onclick="switchTab('services')">🛠️ Servicios</button>
   </div>
 
+  <!-- PESTAÑA 1: PLANIFICADOR DE VIAJE -->
   <div id="plannerTab" class="card">
     <button class="btn btn-gps" id="btnGps" onclick="obtenerUbicacion()">📍 Detectar mi Paradero (GPS)</button>
     <div id="gpsToast" class="gps-toast hidden"></div>
@@ -316,6 +378,7 @@
     <div id="results" class="results-section" style="margin-top: 16px;"></div>
   </div>
 
+  <!-- PESTAÑA 2: PLANILLA COMPLETA -->
   <div id="schedulesTab" class="card hidden">
     <div class="form-group">
       <label for="diaTabla">Ver Horarios Para:</label>
@@ -329,6 +392,49 @@
       <table class="full-schedule-table" id="tablaHorarios"></table>
     </div>
   </div>
+
+  <!-- PESTAÑA 3: NOTICIAS LOCALE S -->
+  <div id="newsTab" class="card hidden">
+    <h3 style="margin-top:0; color:var(--accent);">Avisos y Noticias Locales</h3>
+    
+    <div class="news-item">
+      <div class="news-date">📌 AVISO DE RECORRIDO</div>
+      <div class="news-title">Refuerzo de recorridos en horario punta</div>
+      <div class="news-body">Se recuerdan los recorridos matutinos desde Loica Arriba a las 07:00 hrs con conexión directa a San Pedro y Las Arañas.</div>
+    </div>
+
+    <div class="news-item">
+      <div class="news-date">📢 COMUNIDAD</div>
+      <div class="news-title">Uso de la Aplicación de Micros</div>
+      <div class="news-body">Recuerda activar el GPS de tu celular al presionar el botón verde para detectar automáticamente el paradero más cercano.</div>
+    </div>
+  </div>
+
+  <!-- PESTAÑA 4: SERVICIOS Y TELÉFONOS ÚTILES -->
+  <div id="servicesTab" class="card hidden">
+    <h3 style="margin-top:0; color:var(--accent);">Teléfonos de Emergencia y Servicios</h3>
+    
+    <a href="tel:133" class="service-link">
+      <div class="service-info"><span>🚓</span> Carabineros San Pedro</div>
+      <span class="service-btn-call">Llamar 133</span>
+    </a>
+
+    <a href="tel:132" class="service-link">
+      <div class="service-info"><span>🚒</span> Bomberos San Pedro</div>
+      <span class="service-btn-call">Llamar 132</span>
+    </a>
+
+    <a href="tel:131" class="service-link">
+      <div class="service-info"><span>🚑</span> Ambulancia / Cesfam</div>
+      <span class="service-btn-call">Llamar 131</span>
+    </a>
+
+    <a href="tel:+56912345678" class="service-link">
+      <div class="service-info"><span>🏛️</span> Municipalidad San Pedro</div>
+      <span class="service-btn-call">Llamar</span>
+    </a>
+  </div>
+
 </div>
 
 <script>
@@ -360,10 +466,8 @@
     return h * 60 + m;
   }
 
-  // Convertir minutos simples a formato Horas y Minutos (Ej: 145 min -> "2 h 25 min")
   function formatearTiempo(totalMinutos) {
     if (totalMinutos === 0) return "⚡ ¡Pasa ahora mismo!";
-    
     const horas = Math.floor(totalMinutos / 60);
     const mins = totalMinutos % 60;
 
@@ -685,7 +789,7 @@
           </div>
           <div style="font-size: 14px; margin-bottom: 6px;">
             Pasa por <b>${origen}</b> a las <b style="color:var(--accent); font-size:16px;">${opt.timeOrig} hrs</b>
-            ${idx > 0 ? `<span style="color:var(--text-muted); font-size:12px;"> (en ${formatearTiempo(minFaltantes).replace('⏳ Llega en ', '')})</span>` : ''}
+            ${idx > 0 ? `<span style="color:var(--text-muted); font-size:12px;"> (${formatearTiempo(minFaltantes).replace('⏳ ', '')})</span>` : ''}
           </div>
           <div class="dest-list">
             <div style="font-size:11px; font-weight:700; color:var(--text-muted); text-transform:uppercase;">Horarios de llegada según destino:</div>
@@ -709,17 +813,29 @@
     resultsDiv.innerHTML = html;
   }
 
+  // Cambio de pestañas
   function switchTab(tabName) {
     document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    
+    // Ocultar todas
+    document.getElementById('plannerTab').classList.add('hidden');
+    document.getElementById('schedulesTab').classList.add('hidden');
+    document.getElementById('newsTab').classList.add('hidden');
+    document.getElementById('servicesTab').classList.add('hidden');
+
     if (tabName === 'planner') {
       document.querySelectorAll('.tab-btn')[0].classList.add('active');
       document.getElementById('plannerTab').classList.remove('hidden');
-      document.getElementById('schedulesTab').classList.add('hidden');
-    } else {
+    } else if (tabName === 'schedules') {
       document.querySelectorAll('.tab-btn')[1].classList.add('active');
-      document.getElementById('plannerTab').classList.add('hidden');
       document.getElementById('schedulesTab').classList.remove('hidden');
       renderScheduleTable();
+    } else if (tabName === 'news') {
+      document.querySelectorAll('.tab-btn')[2].classList.add('active');
+      document.getElementById('newsTab').classList.remove('hidden');
+    } else if (tabName === 'services') {
+      document.querySelectorAll('.tab-btn')[3].classList.add('active');
+      document.getElementById('servicesTab').classList.remove('hidden');
     }
   }
 
