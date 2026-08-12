@@ -355,7 +355,6 @@
         const lat = pos.coords.latitude;
         const lon = pos.coords.longitude;
         
-        // Mapeo con los 10 puntos de Camino La Mina
         const paraderos = [
           { nombre: "El Prado", puntos: [{ lat: -33.918816, lon: -71.509085 }] },
           { 
@@ -373,7 +372,22 @@
               { lat: -33.9197842, lon: -71.4787002 }
             ] 
           },
-          { nombre: "San Pedro", puntos: [{ lat: -33.894460, lon: -71.454659 }] },
+          { 
+            nombre: "San Pedro", 
+            puntos: [
+              { lat: -33.892813,  lon: -71.4638207 },
+              { lat: -33.8936679, lon: -71.4617178 },
+              { lat: -33.893846,  lon: -71.4594862 },
+              { lat: -33.893846,  lon: -71.4573405 },
+              { lat: -33.8939885, lon: -71.4563105 },
+              { lat: -33.8943269, lon: -71.4550874 },
+              { lat: -33.8945585, lon: -71.4544222 },
+              { lat: -33.8954312, lon: -71.4546368 },
+              { lat: -33.8965711, lon: -71.4549372 },
+              { lat: -33.8973726, lon: -71.4540145 },
+              { lat: -33.900721,  lon: -71.4508817 }
+            ] 
+          },
           { nombre: "Las Arañas", puntos: [{ lat: -33.909715, lon: -71.414746 }] },
           { nombre: "Los Culenes", puntos: [{ lat: -33.896697, lon: -71.403104 }] },
           { nombre: "El Sauce", puntos: [{ lat: -33.876012, lon: -71.382774 }] },
@@ -496,7 +510,7 @@
       document.getElementById('schedulesTab').classList.add('hidden');
     } else {
       document.querySelectorAll('.tab-btn')[1].classList.add('active');
-      document.getElementById('plannerTab').classList.hidden = true;
+      document.getElementById('plannerTab').classList.add('hidden');
       document.getElementById('schedulesTab').classList.remove('hidden');
       renderScheduleTable();
     }
