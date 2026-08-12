@@ -537,7 +537,6 @@
       <h2 style="margin: 0 0 6px 0; color: #ffffff;">📻 Radio EnSanPedro</h2>
       <p style="margin: 0 0 16px 0; color: #f472b6; font-size: 13px;">Música, compañía e información comunitaria</p>
       
-      <!-- REPRODUCTOR STREAMING DIRECTO -->
       <audio id="audioRadio" src="https://centova.streaming-chile.com/proxy/ensanpedro?mp=/stream" preload="none"></audio>
       
       <button class="btn-play-radio" id="btnPlayRadio" onclick="toggleRadio()">
@@ -566,10 +565,19 @@
     </div>
   </div>
 
-  <!-- PESTAÑA 5: NOTICIAS LOCALES -->
+  <!-- PESTAÑA 5: NOTICIAS LOCALES E INSTAGRAM MUNICIPAL -->
   <div id="newsTab" class="card hidden">
-    <h3 style="margin-top:0; color:var(--accent);">📰 Avisos y Noticias Locales</h3>
-    
+    <h3 style="margin-top:0; color:var(--accent);">📰 Noticias y Avisos Oficiales</h3>
+
+    <!-- TARJETA DESTACADA INSTAGRAM MUNICIPAL (@SANPEDROMUNI) -->
+    <div class="ad-card" style="background: linear-gradient(135deg, #833ab4 0%, #fd1d1d 50%, #fcb045 100%); border:none;">
+      <div class="ad-title">📸 Municipalidad de San Pedro</div>
+      <div class="ad-desc">Revisa los comunicados oficiales, avisos comunales y actividades en la cuenta oficial @sanpedromuni.</div>
+      <a href="https://www.instagram.com/sanpedromuni/" target="_blank" class="ad-btn" style="background:#ffffff; color:#0f172a; font-weight:800;">
+        📸 Abrir Instagram @sanpedromuni
+      </a>
+    </div>
+
     <div class="news-item">
       <div class="news-date">📌 AVISO DE RECORRIDO</div>
       <div class="news-title">Refuerzo de recorridos en horario punta</div>
