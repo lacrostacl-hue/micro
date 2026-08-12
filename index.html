@@ -17,7 +17,6 @@
       --bg-color: #0f172a;
       --card-bg: #1e293b;
       --accent: #38bdf8;
-      --accent-hover: #0284c7;
       --text-main: #f8fafc;
       --text-muted: #94a3b8;
       --border-color: #334155;
@@ -42,12 +41,12 @@
       max-width: 480px;
       display: flex;
       flex-direction: column;
-      gap: 16px;
+      gap: 14px;
     }
 
     header {
       text-align: center;
-      padding: 12px 0 4px 0;
+      padding: 8px 0 2px 0;
     }
 
     header h1 {
@@ -98,7 +97,6 @@
       color: var(--text-main);
       font-size: 15px;
       outline: none;
-      transition: border-color 0.2s;
     }
 
     select:disabled, input:disabled {
@@ -143,41 +141,68 @@
       line-height: 1.4;
     }
 
-    /* Pestañas de navegación con scroll horizontal suave */
-    .tabs-wrapper {
-      overflow-x: auto;
-      white-space: nowrap;
-      padding-bottom: 4px;
-      -webkit-overflow-scrolling: touch;
+    /* PESTAÑAS PRINCIPALES (HORARIOS) */
+    .tabs-main {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+      background-color: #0f172a;
+      padding: 4px;
+      border-radius: 12px;
     }
 
-    .tabs {
-      display: inline-flex;
-      gap: 6px;
-      background-color: #0f172a;
-      padding: 6px;
-      border-radius: 12px;
-      width: 100%;
+    /* PESTAÑAS SECUNDARIAS DESTACADAS Y LLAMATIVAS */
+    .tabs-highlight {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
     }
 
     .tab-btn {
-      flex: 1;
-      padding: 10px 12px;
+      padding: 10px 6px;
       border: none;
-      border-radius: 8px;
-      background: none;
+      border-radius: 10px;
+      background-color: #1e293b;
       color: var(--text-muted);
       font-size: 12px;
-      font-weight: 600;
+      font-weight: 700;
       cursor: pointer;
       text-align: center;
-      transition: all 0.2s;
+      transition: all 0.2s ease;
+      border: 1px solid var(--border-color);
     }
 
     .tab-btn.active {
-      background-color: var(--card-bg);
-      color: var(--accent);
-      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+      background-color: var(--accent);
+      color: #0f172a;
+      border-color: var(--accent);
+    }
+
+    /* ESTILOS LLAMATIVOS PARA BOTONES INFERIORES */
+    .btn-ad {
+      background: linear-gradient(135deg, #f59e0b 0%, #d97706 100%);
+      color: #0f172a !important;
+      border: 1px solid #fbbf24 !important;
+      box-shadow: 0 0 10px rgba(245, 158, 11, 0.3);
+      animation: pulseAd 2s infinite;
+    }
+
+    .btn-news {
+      background: linear-gradient(135deg, #0284c7 0%, #0369a1 100%);
+      color: #ffffff !important;
+      border: 1px solid #38bdf8 !important;
+    }
+
+    .btn-services {
+      background: linear-gradient(135deg, #059669 0%, #047857 100%);
+      color: #ffffff !important;
+      border: 1px solid #34d399 !important;
+    }
+
+    @keyframes pulseAd {
+      0% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0.6); }
+      70% { box-shadow: 0 0 0 8px rgba(245, 158, 11, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(245, 158, 11, 0); }
     }
 
     .result-card {
@@ -238,7 +263,7 @@
       font-size: 13px;
     }
 
-    /* TARJETAS DE PUBLICIDAD EXCLUSIVAS */
+    /* PUBLICIDAD Y TARJETAS */
     .ad-card {
       background: linear-gradient(135deg, #1e1b4b 0%, #311b92 100%);
       border: 1px solid #6366f1;
@@ -287,7 +312,6 @@
       text-align: center;
     }
 
-    /* ESTILOS NOTICIAS Y SERVICIOS */
     .news-item {
       background-color: #0f172a;
       border-radius: 10px;
@@ -371,15 +395,17 @@
     <p>Información de transporte y comunidad</p>
   </header>
 
-  <!-- Pestañas de Navegación -->
-  <div class="tabs-wrapper">
-    <div class="tabs">
-      <button class="tab-btn active" onclick="switchTab('planner')">🔍 Consulta Viaje</button>
-      <button class="tab-btn" onclick="switchTab('schedules')">📋 Horarios</button>
-      <button class="tab-btn" onclick="switchTab('news')">📰 Noticias</button>
-      <button class="tab-btn" onclick="switchTab('ads')">🛍️ Publicidad</button>
-      <button class="tab-btn" onclick="switchTab('services')">🛠️ Servicios</button>
-    </div>
+  <!-- PESTAÑAS PRINCIPALES: TRANSPORTES -->
+  <div class="tabs-main">
+    <button class="tab-btn active" onclick="switchTab('planner')">🔍 Consulta Viaje</button>
+    <button class="tab-btn" onclick="switchTab('schedules')">📋 Planilla Horarios</button>
+  </div>
+
+  <!-- PESTAÑAS SECUNDARIAS: BOTONES MUY LLAMATIVOS Y DESTACADOS ABAJO -->
+  <div class="tabs-highlight">
+    <button class="tab-btn btn-ad" onclick="switchTab('ads')">🛍️ Publicidad</button>
+    <button class="tab-btn btn-news" onclick="switchTab('news')">📰 Noticias</button>
+    <button class="tab-btn btn-services" onclick="switchTab('services')">🛠️ Servicios</button>
   </div>
 
   <!-- PESTAÑA 1: PLANIFICADOR DE VIAJE -->
@@ -451,9 +477,31 @@
     </div>
   </div>
 
-  <!-- PESTAÑA 3: NOTICIAS LOCALE S -->
+  <!-- PESTAÑA 3: PUBLICIDAD Y COMERCIO LOCAL -->
+  <div id="adsTab" class="card hidden">
+    <h3 style="margin-top:0; color:#f59e0b;">🛍️ Comercio y Locales Recomendados</h3>
+
+    <!-- ANUNCIO LACROSTA.CL -->
+    <div class="ad-card">
+      <span class="ad-badge">Auspiciador</span>
+      <div class="ad-title">🍕 La Crosta - Comida Rápida</div>
+      <div class="ad-desc">Las mejores pizzas artesanales, hamburguesas y promociones en San Pedro. ¡Pide en línea para retiro o despacho!</div>
+      <a href="https://lacrosta.cl" target="_blank" class="ad-btn">🌐 Pedir en lacrosta.cl</a>
+    </div>
+
+    <!-- TARJETA PUBLICITA AQUÍ -->
+    <div class="news-item" style="background:#1e293b; text-align:center; border:1px dashed #f59e0b; margin-top:20px;">
+      <div class="news-title" style="color:#f59e0b;">¿Quieres promocionar tu negocio?</div>
+      <div class="news-body">Destaca tu emprendimiento, almacén o servicio gastronómico ante todos los vecinos de San Pedro.</div>
+      <div style="margin-top:12px;">
+        <a href="https://wa.me/56912345678?text=Hola,%20me%20gustaria%20publicitar%20mi%20local%20en%20la%20app%20de%20micros" target="_blank" class="ad-btn" style="background:#22c55e;">📲 Publicitar Mi Negocio</a>
+      </div>
+    </div>
+  </div>
+
+  <!-- PESTAÑA 4: NOTICIAS LOCALES -->
   <div id="newsTab" class="card hidden">
-    <h3 style="margin-top:0; color:var(--accent);">Avisos y Noticias Locales</h3>
+    <h3 style="margin-top:0; color:var(--accent);">📰 Avisos y Noticias Locales</h3>
     
     <div class="news-item">
       <div class="news-date">📌 AVISO DE RECORRIDO</div>
@@ -468,31 +516,9 @@
     </div>
   </div>
 
-  <!-- PESTAÑA 4: PUBLICIDAD Y LOCALES COMERCIALES -->
-  <div id="adsTab" class="card hidden">
-    <h3 style="margin-top:0; color:var(--accent);">Comercio y Locales Recomendados</h3>
-
-    <!-- ANUNCIO LACROSTA.CL -->
-    <div class="ad-card">
-      <span class="ad-badge">Auspiciador</span>
-      <div class="ad-title">🍕 La Crosta - Comida Rápida</div>
-      <div class="ad-desc">Las mejores pizzas artesanales, hamburguesas y promociones en San Pedro. ¡Pide en línea para retiro o despacho!</div>
-      <a href="https://lacrosta.cl" target="_blank" class="ad-btn">🌐 Pedir en lacrosta.cl</a>
-    </div>
-
-    <!-- TARJETA PUBLICITA AQUÍ -->
-    <div class="news-item" style="background:#1e293b; text-align:center; border:1px dashed var(--accent); margin-top:20px;">
-      <div class="news-title" style="color:var(--accent);">¿Quieres promocionar tu negocio?</div>
-      <div class="news-body">Destaca tu emprendimiento, almacén o servicio gastronómico ante todos los vecinos de San Pedro.</div>
-      <div style="margin-top:12px;">
-        <a href="https://wa.me/56912345678?text=Hola,%20me%20gustaria%20publicitar%20mi%20local%20en%20la%20app%20de%20micros" target="_blank" class="ad-btn" style="background:#22c55e;">📲 Publicitar Mi Negocio</a>
-      </div>
-    </div>
-  </div>
-
   <!-- PESTAÑA 5: SERVICIOS Y TELÉFONOS ÚTILES -->
   <div id="servicesTab" class="card hidden">
-    <h3 style="margin-top:0; color:var(--accent);">Teléfonos de Emergencia y Servicios</h3>
+    <h3 style="margin-top:0; color:#34d399;">🛠️ Teléfonos de Emergencia y Servicios</h3>
     
     <a href="tel:133" class="service-link">
       <div class="service-info"><span>🚓</span> Carabineros San Pedro</div>
@@ -910,12 +936,12 @@
       document.querySelectorAll('.tab-btn')[1].classList.add('active');
       document.getElementById('schedulesTab').classList.remove('hidden');
       renderScheduleTable();
-    } else if (tabName === 'news') {
-      document.querySelectorAll('.tab-btn')[2].classList.add('active');
-      document.getElementById('newsTab').classList.remove('hidden');
     } else if (tabName === 'ads') {
-      document.querySelectorAll('.tab-btn')[3].classList.add('active');
+      document.querySelectorAll('.tab-btn')[2].classList.add('active');
       document.getElementById('adsTab').classList.remove('hidden');
+    } else if (tabName === 'news') {
+      document.querySelectorAll('.tab-btn')[3].classList.add('active');
+      document.getElementById('newsTab').classList.remove('hidden');
     } else if (tabName === 'services') {
       document.querySelectorAll('.tab-btn')[4].classList.add('active');
       document.getElementById('servicesTab').classList.remove('hidden');
