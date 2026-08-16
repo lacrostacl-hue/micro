@@ -932,7 +932,7 @@
         if (sirvePorDestino) {
           const timeOrig = r.stops[idxOrig][1];
           const minOrig = timeToMin(timeOrig);
-          if (minOrig >= minConsulta) {
+          if (minOrig >= minConsulta ,5) {
             validOptions.push({
               route: r, timeOrig, minDiff: minOrig - minConsulta, idxOrig, idxDest
             });
