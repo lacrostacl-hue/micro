@@ -621,10 +621,14 @@
   </div>
 
   <!-- PIE DE PÁGINA CON CONTADOR DE VISITAS -->
-  <footer style="text-align: center; margin-top: 10px; margin-bottom: 20px; font-size: 12px; color: var(--text-muted);">
-    <p style="margin-bottom: 6px;">Visitas a la aplicación:</p>
-    <img src="https://hits.seeyoufarm.com/api/count/incr/badge.svg?url=https%3A%2F%2Fhue.github.io&count_bg=%230284C7&title_bg=%231E293B&icon=&icon_color=%23E7E7E7&title=Visitas&edge_flat=false" alt="Contador de Visitas"/>
-  </footer>
+  <!-- PIE DE PÁGINA CON CONTADOR DE VISITAS NATIVO (TEXTO DIRECTO) -->
+<footer style="text-align: center; margin-top: 10px; margin-bottom: 25px; font-size: 12px; color: var(--text-muted);">
+  <p style="margin-bottom: 6px;">Visitas a la aplicación:</p>
+  <div style="display: inline-flex; align-items: center; gap: 8px; background: #1e293b; border: 1px solid var(--border-color); padding: 6px 14px; border-radius: 20px; font-weight: 700; color: var(--accent);">
+    <span>👀</span>
+    <span id="visitCount">Cargando...</span>
+  </div>
+</footer>
 
 </div>
 
@@ -1086,6 +1090,31 @@
   detectarDiaInicial();
   actualizarHoraActual();
   autoCalculate();
+
+  // Contador de visitas usando API JSON estable
+  function registrarVisita() {
+    // Usamos el hostname para que sea único para tu web
+    const siteKey = encodeURIComponent(window.location.hostname || 'micros-san-pedro');
+    
+    fetch(`https://api.counterapi.dev/v1/micros_san_pedro/${siteKey}/up`)
+      .then(res => res.json())
+      .then(data => {
+        if (data && data.count) {
+          document.getElementById('visitCount').innerText = `${data.count.toLocaleString('es-CL')} visitas`;
+        } else {
+          document.getElementById('visitCount').innerText = '1+ visitas';
+        }
+      })
+      .catch(() => {
+        // En caso de modo local/offline
+        let localCount = parseInt(localStorage.getItem('visitas_app') || '1') + 1;
+        localStorage.setItem('visitas_app', localCount);
+        document.getElementById('visitCount').innerText = `${localCount} visitas`;
+      });
+  }
+
+  // Ejecutar contador al abrir la app
+  registrarVisita();
 </script>
 
 </body>
