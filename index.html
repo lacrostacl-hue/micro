@@ -128,6 +128,18 @@
       margin-bottom: 10px;
     }
 
+    .btn-pdf {
+      background-color: #e11d48;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 12px;
+      padding: 12px;
+      font-size: 14px;
+    }
+
     .gps-toast {
       background-color: #065f46;
       color: #34d399;
@@ -422,26 +434,46 @@
       border-radius: 6px;
     }
 
-    .full-schedule-table {
-      width: 100%;
-      border-collapse: collapse;
-      font-size: 12px;
-      margin-top: 8px;
-    }
-
-    .full-schedule-table th, .full-schedule-table td {
-      padding: 8px 4px;
-      text-align: center;
-      border-bottom: 1px solid var(--border-color);
-    }
-
-    .full-schedule-table th {
-      color: var(--accent);
-      font-weight: 600;
-      background-color: #0f172a;
-    }
-
     .hidden { display: none; }
+
+    /* ESTILOS DE IMPRESIÓN Y GUARDADO A PDF */
+    @media print {
+      body {
+        background-color: #ffffff !important;
+        color: #000000 !important;
+        padding: 0;
+      }
+      .app-container {
+        max-width: 100% !important;
+        width: 100% !important;
+      }
+      header h1, header p, .tabs-main, .tabs-highlight, .btn-pdf, footer, #plannerTab, #radioTab, #adsTab, #newsTab, #servicesTab {
+        display: none !important;
+      }
+      #schedulesTab {
+        display: block !important;
+        background: transparent !important;
+        border: none !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+      }
+      .form-group {
+        display: none !important;
+      }
+      details {
+        border: 1px solid #ccc !important;
+        background: #ffffff !important;
+        color: #000000 !important;
+        page-break-inside: avoid;
+        margin-bottom: 8px !important;
+      }
+      details[open] summary ~ * {
+        color: #000000 !important;
+      }
+      summary span {
+        color: #000000 !important;
+      }
+    }
   </style>
 </head>
 <body>
@@ -518,7 +550,7 @@
     <div id="results" class="results-section" style="margin-top: 16px;"></div>
   </div>
 
-  <!-- PESTAÑA 2: PLANILLA COMPLETA -->
+  <!-- PESTAÑA 2: PLANILLA COMPLETA CON DESCARGA PDF -->
   <div id="schedulesTab" class="card hidden">
     <div class="form-group">
       <label for="diaTabla">Ver Horarios Para:</label>
@@ -528,9 +560,12 @@
       </select>
     </div>
 
-    <div style="overflow-x: auto;">
-      <table class="full-schedule-table" id="tablaHorarios"></table>
-    </div>
+    <!-- BOTÓN PARA DESCARGAR O IMPRIMIR HORARIOS EN PDF -->
+    <button class="btn btn-pdf" onclick="descargarHorariosPDF()">
+      📄 Descargar / Guardar en PDF
+    </button>
+
+    <div id="tablaHorarios" style="margin-top: 14px;"></div>
   </div>
 
   <!-- PESTAÑA 3: RADIO EN VIVO -->
@@ -592,7 +627,6 @@
       <div class="news-date">📢 COMUNIDAD</div>
       <div class="news-title">Uso de la Aplicación de Micros</div>
       <div class="news-body">Recuerda activar el GPS de tu celular al presionar el botón verde para detectar automáticamente el paradero más cercano.</div>
-      <div class="news-body">Los horarios pueden tener un pequeño desfase por lo que se recomienda estar antes del horario indicado en su paradero.</div>
     </div>
   </div>
 
@@ -615,21 +649,20 @@
       <span class="service-btn-call">Llamar 131</span>
     </a>
 
-    <a href="tel:+56955126802" class="service-link">
+    <a href="tel:+56912345678" class="service-link">
       <div class="service-info"><span>🏛️</span> Municipalidad San Pedro</div>
       <span class="service-btn-call">Llamar</span>
     </a>
   </div>
 
-  <!-- PIE DE PÁGINA CON CONTADOR DE VISITAS -->
-  <!-- PIE DE PÁGINA CON CONTADOR DE VISITAS NATIVO (TEXTO DIRECTO) -->
-<footer style="text-align: center; margin-top: 10px; margin-bottom: 25px; font-size: 12px; color: var(--text-muted);">
-  <p style="margin-bottom: 6px;">Visitas a la aplicación:</p>
-  <div style="display: inline-flex; align-items: center; gap: 8px; background: #1e293b; border: 1px solid var(--border-color); padding: 6px 14px; border-radius: 20px; font-weight: 700; color: var(--accent);">
-    <span>👀</span>
-    <span id="visitCount">Cargando...</span>
-  </div>
-</footer>
+  <!-- PIE DE PÁGINA CON CONTADOR DE VISITAS NATIVO -->
+  <footer style="text-align: center; margin-top: 10px; margin-bottom: 25px; font-size: 12px; color: var(--text-muted);">
+    <p style="margin-bottom: 6px;">Visitas a la aplicación:</p>
+    <div style="display: inline-flex; align-items: center; gap: 8px; background: #1e293b; border: 1px solid var(--border-color); padding: 6px 14px; border-radius: 20px; font-weight: 700; color: var(--accent);">
+      <span>👀</span>
+      <span id="visitCount">Cargando...</span>
+    </div>
+  </footer>
 
 </div>
 
@@ -674,7 +707,6 @@
     }
   }
 
-  // Solo actualiza la hora del reloj del celular
   function actualizarHoraActual() {
     const now = new Date();
     const h = String(now.getHours()).padStart(2, '0');
@@ -682,7 +714,6 @@
     document.getElementById('horaConsulta').value = `${h}:${m}`;
   }
 
-  // Detecta el día de hoy solo una vez al cargar la página
   function detectarDiaInicial() {
     const now = new Date();
     const dayOfWeek = now.getDay();
@@ -948,7 +979,6 @@
           const timeOrig = r.stops[idxOrig][1];
           const minOrig = timeToMin(timeOrig);
           
-          // Tolerancia de 5 minutos: no borra la micro si pasan un par de minutos
           if (minOrig >= (minConsulta - 5)) {
             validOptions.push({
               route: r, 
@@ -1072,63 +1102,57 @@
   }
 
   function renderScheduleTable() {
-  const dia = document.getElementById('diaTabla').value;
-  const routes = SCHEDULES[dia];
-  let html = `<div style="display:flex; flex-direction:column; gap:10px; margin-top:10px;">`;
+    const dia = document.getElementById('diaTabla').value;
+    const routes = SCHEDULES[dia];
+    let html = `<div style="display:flex; flex-direction:column; gap:10px;">`;
 
-  routes.forEach((r, idx) => {
-    const horaSalida = r.stops[0][1];
-    const horaLlegada = r.stops[r.stops.length - 1][1];
-    const origen = r.stops[0][0];
-    const destino = r.stops[r.stops.length - 1][0];
+    routes.forEach((r, idx) => {
+      const horaSalida = r.stops[0][1];
 
-    html += `
-      <details style="background:#0f172a; border:1px solid var(--border-color); border-radius:10px; padding:10px; overflow:hidden;" ${idx === 0 ? 'open' : ''}>
-        <summary style="cursor:pointer; outline:none; list-style:none; display:flex; justify-content:space-between; align-items:center; font-weight:700;">
-          <div>
-            <span style="color:var(--accent); font-size:15px;">🚌 ${horaSalida} hrs</span>
-            <span style="font-size:13px; color:var(--text-main); margin-left:6px;">${r.cabecera} ➔ ${r.fin}</span>
-          </div>
-          <span style="font-size:11px; color:var(--text-muted);">Ver ruta ▼</span>
-        </summary>
-
-        <div style="margin-top:10px; padding-top:8px; border-top:1px dashed var(--border-color); display:flex; flex-direction:column; gap:6px;">
-    `;
-
-    r.stops.forEach((stop, sIdx) => {
-      const esPrimero = (sIdx === 0);
-      const esUltimo = (sIdx === r.stops.length - 1);
-      
       html += `
-        <div style="display:flex; justify-content:space-between; font-size:12px; ${esPrimero || esUltimo ? 'color:var(--accent); font-weight:700;' : 'color:var(--text-muted);'}">
-          <span>${esPrimero ? '🟢 Salida:' : (esUltimo ? '🏁 Término:' : '📍')} ${stop[0]}</span>
-          <b style="color:var(--text-main);">${stop[1]} hrs</b>
-        </div>
+        <details style="background:#0f172a; border:1px solid var(--border-color); border-radius:10px; padding:12px;" ${idx === 0 ? 'open' : ''}>
+          <summary style="cursor:pointer; outline:none; display:flex; justify-content:space-between; align-items:center; font-weight:700;">
+            <div>
+              <span style="color:var(--accent); font-size:15px;">🚌 ${horaSalida} hrs</span>
+              <span style="font-size:13px; color:var(--text-main); margin-left:6px;">${r.cabecera} ➔ ${r.fin}</span>
+            </div>
+            <span style="font-size:11px; color:var(--text-muted);">Ver ruta ▼</span>
+          </summary>
+
+          <div style="margin-top:10px; padding-top:8px; border-top:1px dashed var(--border-color); display:flex; flex-direction:column; gap:6px;">
+      `;
+
+      r.stops.forEach((stop, sIdx) => {
+        const esPrimero = (sIdx === 0);
+        const esUltimo = (sIdx === r.stops.length - 1);
+        
+        html += `
+          <div style="display:flex; justify-content:space-between; font-size:12px; ${esPrimero || esUltimo ? 'color:var(--accent); font-weight:700;' : 'color:var(--text-muted);'}">
+            <span>${esPrimero ? '🟢 Salida:' : (esUltimo ? '🏁 Término:' : '📍')} ${stop[0]}</span>
+            <b style="color:var(--text-main);">${stop[1]} hrs</b>
+          </div>
+        `;
+      });
+
+      html += `
+          </div>
+        </details>
       `;
     });
 
-    html += `
-        </div>
-      </details>
-    `;
-  });
+    html += `</div>`;
+    document.getElementById('tablaHorarios').innerHTML = html;
+  }
 
-  html += `</div>`;
-  document.getElementById('tablaHorarios').innerHTML = html;
-}
-
-  setInterval(() => {
-    actualizarHoraActual();
-    autoCalculate();
-  }, 30000);
-
-  detectarDiaInicial();
-  actualizarHoraActual();
-  autoCalculate();
+  // Función para descargar / imprimir PDF con todos los acordeones abiertos
+  function descargarHorariosPDF() {
+    const details = document.querySelectorAll('#schedulesTab details');
+    details.forEach(d => d.setAttribute('open', 'true'));
+    window.print();
+  }
 
   // Contador de visitas usando API JSON estable
   function registrarVisita() {
-    // Usamos el hostname para que sea único para tu web
     const siteKey = encodeURIComponent(window.location.hostname || 'micros-san-pedro');
     
     fetch(`https://api.counterapi.dev/v1/micros_san_pedro/${siteKey}/up`)
@@ -1141,14 +1165,20 @@
         }
       })
       .catch(() => {
-        // En caso de modo local/offline
         let localCount = parseInt(localStorage.getItem('visitas_app') || '1') + 1;
         localStorage.setItem('visitas_app', localCount);
         document.getElementById('visitCount').innerText = `${localCount} visitas`;
       });
   }
 
-  // Ejecutar contador al abrir la app
+  setInterval(() => {
+    actualizarHoraActual();
+    autoCalculate();
+  }, 30000);
+
+  detectarDiaInicial();
+  actualizarHoraActual();
+  autoCalculate();
   registrarVisita();
 </script>
 
