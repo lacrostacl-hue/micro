@@ -1071,16 +1071,50 @@
   }
 
   function renderScheduleTable() {
-    const dia = document.getElementById('diaTabla').value;
-    const routes = SCHEDULES[dia];
-    let html = `<thead><tr><th>Salida</th><th>Recorrido</th><th>Golondrinas</th><th>San Pedro</th><th>Llegada</th></tr></thead><tbody>`;
-    routes.forEach(r => {
-      const gol = r.stops.find(s => s[0] === 'Las Golondrinas')?.[1] || '-';
-      const sp = r.stops.find(s => s[0] === 'San Pedro')?.[1] || '-';
-      html += `<tr><td><b>${r.salida}</b></td><td style="text-align:left;">${r.cabecera} ➔ ${r.fin}</td><td>${gol}</td><td>${sp}</td><td><b style="color:var(--accent);">${r.stops[r.stops.length-1][1]}</b></td></tr>`;
+  const dia = document.getElementById('diaTabla').value;
+  const routes = SCHEDULES[dia];
+  let html = `<div style="display:flex; flex-direction:column; gap:10px; margin-top:10px;">`;
+
+  routes.forEach((r, idx) => {
+    const horaSalida = r.stops[0][1];
+    const horaLlegada = r.stops[r.stops.length - 1][1];
+    const origen = r.stops[0][0];
+    const destino = r.stops[r.stops.length - 1][0];
+
+    html += `
+      <details style="background:#0f172a; border:1px solid var(--border-color); border-radius:10px; padding:10px; overflow:hidden;" ${idx === 0 ? 'open' : ''}>
+        <summary style="cursor:pointer; outline:none; list-style:none; display:flex; justify-content:space-between; align-items:center; font-weight:700;">
+          <div>
+            <span style="color:var(--accent); font-size:15px;">🚌 ${horaSalida} hrs</span>
+            <span style="font-size:13px; color:var(--text-main); margin-left:6px;">${r.cabecera} ➔ ${r.fin}</span>
+          </div>
+          <span style="font-size:11px; color:var(--text-muted);">Ver ruta ▼</span>
+        </summary>
+
+        <div style="margin-top:10px; padding-top:8px; border-top:1px dashed var(--border-color); display:flex; flex-direction:column; gap:6px;">
+    `;
+
+    r.stops.forEach((stop, sIdx) => {
+      const esPrimero = (sIdx === 0);
+      const esUltimo = (sIdx === r.stops.length - 1);
+      
+      html += `
+        <div style="display:flex; justify-content:space-between; font-size:12px; ${esPrimero || esUltimo ? 'color:var(--accent); font-weight:700;' : 'color:var(--text-muted);'}">
+          <span>${esPrimero ? '🟢 Salida:' : (esUltimo ? '🏁 Término:' : '📍')} ${stop[0]}</span>
+          <b style="color:var(--text-main);">${stop[1]} hrs</b>
+        </div>
+      `;
     });
-    document.getElementById('tablaHorarios').innerHTML = html + `</tbody>`;
-  }
+
+    html += `
+        </div>
+      </details>
+    `;
+  });
+
+  html += `</div>`;
+  document.getElementById('tablaHorarios').innerHTML = html;
+}
 
   setInterval(() => {
     actualizarHoraActual();
