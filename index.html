@@ -371,18 +371,21 @@
       margin-bottom: 12px;
       border: 1px solid var(--border-color);
     }
+
     .news-date {
       font-size: 11px;
       color: var(--accent);
       font-weight: 700;
       margin-bottom: 4px;
     }
+
     .news-title {
       font-size: 15px;
       font-weight: 700;
       margin-bottom: 6px;
       color: var(--text-main);
     }
+
     .news-body {
       font-size: 13px;
       color: var(--text-muted);
@@ -401,6 +404,7 @@
       color: var(--text-main);
       border: 1px solid var(--border-color);
     }
+
     .service-info {
       display: flex;
       align-items: center;
@@ -408,6 +412,7 @@
       font-weight: 600;
       font-size: 14px;
     }
+
     .service-btn-call {
       background-color: #0284c7;
       color: #ffffff;
@@ -609,7 +614,7 @@
       <span class="service-btn-call">Llamar 131</span>
     </a>
 
-    <a href="tel:+56912345678" class="service-link">
+    <a href="tel:+56955126802" class="service-link">
       <div class="service-info"><span>🏛️</span> Municipalidad San Pedro</div>
       <span class="service-btn-call">Llamar</span>
     </a>
@@ -624,7 +629,6 @@
 </div>
 
 <script>
-  // HORARIOS ACTUALIZADOS (08:30 y 13:00 MANTENIDOS; DEMÁS SALIDAS ADELANTADAS EN 10 MINUTOS)
   const SCHEDULES = {
     semana: [
       { id: 1, salida: "06:50", cabecera: "Loica Arriba", fin: "Las Arañas", stops: [["Loica Arriba", "06:50"], ["Las Golondrinas", "07:02"], ["El Manzanito", "07:08"], ["El Prado", "07:20"], ["Camino La Mina", "07:25"], ["San Pedro", "07:30"], ["Las Arañas", "07:40"]] },
@@ -654,7 +658,7 @@
   }
 
   function formatearTiempo(totalMinutos) {
-    if (totalMinutos === 0) return "⚡ ¡Pasa ahora mismo!";
+    if (totalMinutos <= 0) return "⚡ ¡Pasa ahora mismo!";
     const horas = Math.floor(totalMinutos / 60);
     const mins = totalMinutos % 60;
 
@@ -665,11 +669,17 @@
     }
   }
 
+  // Solo actualiza la hora del reloj del celular
   function actualizarHoraActual() {
     const now = new Date();
     const h = String(now.getHours()).padStart(2, '0');
     const m = String(now.getMinutes()).padStart(2, '0');
     document.getElementById('horaConsulta').value = `${h}:${m}`;
+  }
+
+  // Detecta el día de hoy solo una vez al cargar la página
+  function detectarDiaInicial() {
+    const now = new Date();
     const dayOfWeek = now.getDay();
     document.getElementById('dia').value = (dayOfWeek === 0) ? "domingo" : "semana";
   }
@@ -932,9 +942,15 @@
         if (sirvePorDestino) {
           const timeOrig = r.stops[idxOrig][1];
           const minOrig = timeToMin(timeOrig);
-          if (minOrig >= minConsulta ,5) {
+          
+          // Tolerancia de 5 minutos: no borra la micro si pasan un par de minutos
+          if (minOrig >= (minConsulta - 5)) {
             validOptions.push({
-              route: r, timeOrig, minDiff: minOrig - minConsulta, idxOrig, idxDest
+              route: r, 
+              timeOrig, 
+              minDiff: Math.max(0, minOrig - minConsulta), 
+              idxOrig, 
+              idxDest
             });
           }
         }
@@ -1067,6 +1083,7 @@
     autoCalculate();
   }, 30000);
 
+  detectarDiaInicial();
   actualizarHoraActual();
   autoCalculate();
 </script>
